@@ -10,12 +10,18 @@ const postRoutes = require('./routes/postRoutes');
 const viewRoutes = require('./routes/viewRoutes');
 const writerRoutes = require('./routes/writerRoutes');
 const path = require('path');
+const os = require('os');
+const dns = require('dns');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'frontend')));
 
+
+dns.lookup(os.hostname(), (err, address) => {
+  console.log('Server is running from IP:', address);
+});
 // Route Mounts
 app.use('/api/articles', articleRoutes);
 app.use('/api/books', bookRoutes);
