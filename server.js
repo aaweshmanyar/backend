@@ -12,11 +12,14 @@ const writerRoutes = require('./routes/writerRoutes');
 const path = require('path');
 const os = require('os');
 const dns = require('dns');
+const ipCheckRoutes = require('./routes/testroute');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'frontend')));
+app.use('/test', ipCheckRoutes);
+
 
 
 dns.lookup(os.hostname(), (err, address) => {
