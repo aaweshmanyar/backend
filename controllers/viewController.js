@@ -1,19 +1,23 @@
 const db = require('../config/db');
 
-const getAllViews = (req, res) => {
-  console.log("➡️ GET /api/articles called");
+const getAllViews = async (req, res) => {
+  console.log("➡️ GET /api/views called");
 
-  const query = 'SELECT * FROM views'; // Replace with actual table name if different
+  try {
+    const [results] = await db.query('SELECT * FROM views');
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("❌ DB Query Failed:", err.message); // <-- See the error
-      return res.status(500).json({ error: "Internal Server Error" });
+    if (!results.length) {
+      console.warn("⚠️ No views found in table");
+      return res.status(404).json({ message: 'No views found' });
     }
 
-    console.log("✅ DB Query Success:", results);
+    console.log("✅ Views fetched:", results.length);
     res.status(200).json(results);
-  });
+
+  } catch (err) {
+    console.error("❌ Error fetching views:", err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 module.exports = { getAllViews };

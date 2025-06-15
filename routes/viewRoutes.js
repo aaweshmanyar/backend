@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { getAllViews } = require('../controllers/viewController.js');
+const { getAllViews } = require('../controllers/viewController');
 
-router.get('/', getAllViews); // GET /api/books
+router.get('/', getAllViews);
 
 module.exports = router;

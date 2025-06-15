@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { getAllWriter } = require('../controllers/writerController.js');
+const { getAllWriter } = require('../controllers/writerController');
 
-router.get('/', getAllWriter); // GET /api/books
+router.get('/', getAllWriter);
 
 module.exports = router;

@@ -1,24 +1,23 @@
 const db = require('../config/db');
 
-const getAllTopic = (req, res) => {
-  console.log("➡️ GET /api/articles called");
+const getAllTopic = async (req, res) => {
+  console.log("➡️ GET /api/topics called");
 
-  const query = 'SELECT * FROM topic'; // ✅ Ensure this is your actual table
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching articles:", err.message);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+  try {
+    const [results] = await db.query('SELECT * FROM topic');
 
     if (!results.length) {
-      console.warn("⚠️ No articles found in table");
-      return res.status(404).json({ message: 'No articles found' });
+      console.warn("⚠️ No topics found in table");
+      return res.status(404).json({ message: 'No topics found' });
     }
 
-    console.log("✅ Articles fetched:", results.length);
+    console.log("✅ Topics fetched:", results.length);
     res.status(200).json(results);
-  });
+
+  } catch (err) {
+    console.error("❌ Error fetching topics:", err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 module.exports = { getAllTopic };

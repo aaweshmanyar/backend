@@ -1,15 +1,10 @@
 const db = require('../config/db');
 
-const getAllArticles = (req, res) => {
+const getAllArticles = async (req, res) => {
   console.log("➡️ GET /api/articles called");
 
-  const query = 'SELECT * FROM articles'; // ✅ Ensure this is your actual table
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching articles:", err.message);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+  try {
+    const [results] = await db.query('SELECT * FROM articles');
 
     if (!results.length) {
       console.warn("⚠️ No articles found in table");
@@ -18,7 +13,11 @@ const getAllArticles = (req, res) => {
 
     console.log("✅ Articles fetched:", results.length);
     res.status(200).json(results);
-  });
+
+  } catch (err) {
+    console.error("❌ Error fetching articles:", err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 module.exports = { getAllArticles };

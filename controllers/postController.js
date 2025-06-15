@@ -1,15 +1,10 @@
 const db = require('../config/db');
 
-const getAllPosts = (req, res) => {
+const getAllPosts = async (req, res) => {
   console.log("➡️ GET /api/posts called");
 
-  const query = 'SELECT * FROM post'; // ✅ Ensure this table exists
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("❌ Error fetching posts:", err.message);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+  try {
+    const [results] = await db.query('SELECT * FROM post');
 
     if (!results.length) {
       console.warn("⚠️ No posts found in table");
@@ -18,7 +13,11 @@ const getAllPosts = (req, res) => {
 
     console.log("✅ Posts fetched:", results.length);
     res.status(200).json(results);
-  });
+
+  } catch (err) {
+    console.error("❌ Error fetching posts:", err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 module.exports = { getAllPosts };

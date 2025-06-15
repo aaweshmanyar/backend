@@ -1,20 +1,23 @@
 const db = require('../config/db');
 
-const getAllWriter = (req, res) => {
+const getAllWriter = async (req, res) => {
   console.log("➡️ GET /api/writer called");
 
-  const query = 'SELECT * FROM writer'; // Replace with actual table name if different
+  try {
+    const [results] = await db.query('SELECT * FROM writer');
 
-  db.query(query, (err, results) => {
-    if (err) {
-        console.log(results)
-      console.error("❌ DB Query Failed:", err.message); // <-- See the error
-      return res.status(500).json({ error: "Internal Server Error" });
+    if (!results.length) {
+      console.warn("⚠️ No writers found in table");
+      return res.status(404).json({ message: 'No writers found' });
     }
 
-    console.log("✅ DB Query Success:", results);
+    console.log("✅ Writers fetched:", results.length);
     res.status(200).json(results);
-  });
+
+  } catch (err) {
+    console.error("❌ Error fetching writers:", err.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
 module.exports = { getAllWriter };
