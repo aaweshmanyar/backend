@@ -5,6 +5,7 @@ const cors = require('cors');
 dotenv.config();
 
 const articleRoutes = require('./routes/articleroute');
+const topicRoutes = require('./routes/topicroute')
 const bookRoutes = require('./routes/bookRoutes');
 const postRoutes = require('./routes/postRoutes');
 const viewRoutes = require('./routes/viewRoutes');
@@ -27,6 +28,7 @@ dns.lookup(os.hostname(), (err, address) => {
 });
 // Route Mounts
 app.use('/api/articles', articleRoutes);
+app.use('/api/topic', topicRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/views', viewRoutes);

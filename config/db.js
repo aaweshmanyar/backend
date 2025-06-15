@@ -9,7 +9,7 @@ const db = mysql.createConnection({
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-    connectTimeout: 10000,
+  connectTimeout: 10000,
   acquireTimeout: 10000,
   charset: 'utf8mb4' 
 });
