@@ -17,6 +17,10 @@ const viewRoutes = require('./routes/viewRoutes');
 const writerRoutes = require('./routes/writerRoutes');
 const ipCheckRoutes = require('./routes/testroute');
 
+
+//Post Articles
+const postArticle = require('./routes/postarticle');
+
 // Initialize express app
 const app = express();
 
@@ -35,6 +39,10 @@ app.use('/api/books', bookRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/views', viewRoutes);
 app.use('/api/writers', writerRoutes);
+
+
+//Post article
+app.use('/api/postarticle', postArticle);
 
 // IP lookup log
 dns.lookup(os.hostname(), (err, address) => {
