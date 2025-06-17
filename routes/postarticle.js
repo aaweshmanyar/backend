@@ -1,7 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const articleController = require('../controllers/PostArticle');
+const multer = require("multer");
+const upload = multer(); // in-memory upload
+const articleController = require("../controllers/PostArticle");
 
-router.post('/articles', articleController.insertArticle);
+router.post("/postarticle", upload.single("image"), articleController.createArticle);
 
 module.exports = router;

@@ -1,58 +1,74 @@
-const db = require('../config/db'); // adjust path if different
+const db = require("../config/db"); // MySQL connection
 
-// Insert new article into DB
-exports.insertArticle = (req, res) => {
+// Create Article (with optional image + optional fields)
+exports.createArticle = (req, res) => {
   const {
-    slug,
-    image,
-    topic,
     title,
-    content,
+    englishDescription,
+    urduDescription,
+    topic,
     writers,
+    writerDesignation,
+    translator,
     language,
     date,
-    tags,
-    card,
     isPublished,
-    isDeleted,
   } = req.body;
 
-  // Convert language string to integer ID (assuming you follow a convention)
-  const languageMap = {
-    english: 1,
-    urdu: 2,
-    roman: 3,
-  };
+  const imageBuffer = req.file ? req.file.buffer : null;
 
-  const languageId = languageMap[language?.toLowerCase()] || null;
+  let tags = req.body.tags;
+
+  // If tags is an array (FormData appends multiple "tags[]" entries)
+  if (Array.isArray(tags)) {
+    tags = tags.join(", ");
+  }
+
+  if (
+    !title ||
+    !writers ||
+    !language ||
+    !date ||
+    typeof isPublished === "undefined"
+  ) {
+    return res.status(400).send("Required fields are missing.");
+  }
+
+  const createdOn = new Date();
+  const modifiedOn = new Date();
+  const views = 0;
+  const isDeleted = 0;
 
   const sql = `
-    INSERT INTO new_articles (
-      slug, image, topic, title, content, writers, language, date,
-      tags, card, isPublished, isDeleted
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO New_Articles 
+    (image, title, englishDescription, urduDescription, topic, writers, writerDesignation, translator, language, date, tags, views, createdOn, isPublished, modifiedOn, isDeleted)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  const values = [
-    slug,
-    image,
-    topic,
+  const params = [
+    imageBuffer,
     title,
-    content,
+    englishDescription?.trim() || null,
+    urduDescription?.trim() || null,
+    topic || null,
     writers,
-    languageId,
+    writerDesignation || null,
+    translator || null,
+    language,
     date,
-    tags,
-    card,
-    isPublished ? 1 : 0,
-    isDeleted ? 1 : 0,
+    tags || null,
+    views,
+    createdOn,
+    isPublished,
+    modifiedOn,
+    isDeleted,
   ];
 
-  db.query(sql, values, (err, result) => {
+  db.query(sql, params, (err, result) => {
     if (err) {
-      console.error("Insert failed:", err.sqlMessage || err.message);
-      return res.status(500).json({ error: "Failed to insert article" });
+      console.error("Insert error:", err);
+      return res.status(500).send("Failed to insert article.");
     }
-    res.status(201).json({ message: "Article inserted", articleId: result.insertId });
+    res.status(200).json({ message: "Article inserted successfully." });
   });
 };
