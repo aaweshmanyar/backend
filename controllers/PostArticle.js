@@ -18,7 +18,7 @@ exports.insertArticle = (req, res) => {
   } = req.body;
 
   const sql = `
-    INSERT INTO articles (
+    INSERT INTO new_articles (
       slug, image, topic, title, content, writers, language, date,
       tags, card, isPublished, isDeleted
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
