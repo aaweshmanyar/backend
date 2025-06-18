@@ -16,6 +16,7 @@ const postRoutes = require('./routes/postRoutes');
 const viewRoutes = require('./routes/viewRoutes');
 const writerRoutes = require('./routes/writerRoutes');
 const ipCheckRoutes = require('./routes/testroute');
+const Newarticle = require('./routes/newarticlesroute')
 
 
 //Post Articles
@@ -39,6 +40,7 @@ app.use('/api/books', bookRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/views', viewRoutes);
 app.use('/api/writers', writerRoutes);
+app.use('/api/newarticle', Newarticle);
 
 
 //Post article

@@ -1,5 +1,14 @@
 const db = require("../config/db"); // MySQL connection
 
+// Utility to generate slug from title
+const generateSlug = (title) => {
+  return title
+    .trim()
+    .replace(/\s+/g, "-")             // Replace spaces with hyphens
+    .replace(/[^a-zA-Z0-9\-]/g, "")   // Remove non-alphanumeric characters (except hyphen)
+    .toLowerCase();                   // Optional: lowercase for consistency
+};
+
 // Create Article (with optional image + optional fields)
 exports.createArticle = (req, res) => {
   const {
@@ -16,10 +25,8 @@ exports.createArticle = (req, res) => {
   } = req.body;
 
   const imageBuffer = req.file ? req.file.buffer : null;
-
   let tags = req.body.tags;
 
-  // If tags is an array (FormData appends multiple "tags[]" entries)
   if (Array.isArray(tags)) {
     tags = tags.join(", ");
   }
@@ -34,6 +41,7 @@ exports.createArticle = (req, res) => {
     return res.status(400).send("Required fields are missing.");
   }
 
+  const slug = generateSlug(title);
   const createdOn = new Date();
   const modifiedOn = new Date();
   const views = 0;
@@ -41,13 +49,14 @@ exports.createArticle = (req, res) => {
 
   const sql = `
     INSERT INTO New_Articles 
-    (image, title, englishDescription, urduDescription, topic, writers, writerDesignation, translator, language, date, tags, views, createdOn, isPublished, modifiedOn, isDeleted)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (image, title, slug, englishDescription, urduDescription, topic, writers, writerDesignation, translator, language, date, tags, views, createdOn, isPublished, modifiedOn, isDeleted)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const params = [
     imageBuffer,
     title,
+    slug,
     englishDescription?.trim() || null,
     urduDescription?.trim() || null,
     topic || null,
