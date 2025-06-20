@@ -6,7 +6,7 @@ const generateSlug = (title) => {
     .trim()
     .replace(/\s+/g, "-")             // Replace spaces with hyphens
     .replace(/[^a-zA-Z0-9\-]/g, "")   // Remove non-alphanumeric characters (except hyphen)
-    .toLowerCase();                   // Optional: lowercase for consistency
+    .toLowerCase();                   // Lowercase for consistency
 };
 
 // Create Article (with optional image + optional fields)
@@ -78,6 +78,50 @@ exports.createArticle = (req, res) => {
       console.error("Insert error:", err);
       return res.status(500).send("Failed to insert article.");
     }
-    res.status(200).json({ message: "Article inserted successfully." });
+    res.status(200).json({ message: "Article inserted successfully.", articleId: result.insertId });
+  });
+};
+
+// Get single article by ID
+exports.getArticleById = (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).send("Article ID is required.");
+  }
+
+  const sql = `
+    SELECT 
+      id,
+      title,
+      slug,
+      englishDescription,
+      urduDescription,
+      topic,
+      writers,
+      writerDesignation,
+      translator,
+      language,
+      date,
+      tags,
+      views,
+      createdOn,
+      modifiedOn,
+      isPublished
+    FROM New_Articles
+    WHERE id = ? AND isDeleted = 0
+  `;
+
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      console.error("Error fetching article:", err);
+      return res.status(500).send("Error fetching article.");
+    }
+
+    if (results.length === 0) {
+      return res.status(404).send("Article not found.");
+    }
+
+    res.status(200).json(results[0]);
   });
 };
